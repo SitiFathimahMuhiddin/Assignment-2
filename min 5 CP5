@@ -1,0 +1,62 @@
+import com.temboo.core.*;
+import com.temboo.Library.eBay.Shopping.*;
+import controlP5.*;
+
+String url1, url2;
+
+ControlP5 cp5; 
+color bColor = color(255, 255, 255);
+
+// Create a session using your Temboo account application details
+TembooSession session = new TembooSession("cityfathimah", "myFirstApp", "vLObMb2LzaJM7gXXFGQoCFTJ3YD0ekNp");
+
+void setup() {
+  // Run the FindProducts Choreo function
+  size(500,500);
+    cp5 = new ControlP5(this);
+    cp5.addSlider("mySlider").setPosition(20, 20).setSize(200, 20);
+    cp5.addTextfield("QueryKeyword").setPosition(20, 100).setSize(200, 40).setAutoClear(false);
+    cp5.addTextfield("MaxEntries").setPosition(20, 170).setSize(200, 40).setAutoClear(false);
+    cp5.addBang("Submit").setPosition(240, 170).setSize(80, 40);    
+
+}
+
+void draw () {
+   background(bColor);
+      // cp5.getController returns a Controller object
+      Controller c = cp5.getController("mySlider");
+      println(c.getValue());
+
+      // cp5.get here returns a Slider object
+      Slider slider = cp5.get(Slider.class, "mySlider");
+      println(slider.getMin(), slider.getMax());
+}
+
+void Submit() {
+  print("the following text was submitted :");
+  url1 = cp5.get(Textfield.class,"QueryKeyword").getText();
+  url2 = cp5.get(Textfield.class,"MaxEntries").getText();
+  print(" QueryKeyword = " + url1);
+  print(" MaxEntries = " + url2);
+  println();
+  runFindProductsChoreo();
+  bColor = color(random(255), random(255), random(255)); 
+}
+
+void runFindProductsChoreo() {
+  // Create the Choreo object using your Temboo session
+  FindProducts findProductsChoreo = new FindProducts(session);
+
+  // Set inputs
+  findProductsChoreo.setMaxEntries(url2);//get from user via text input field 
+  findProductsChoreo.setQueryKeywords(url1);//get from user via text input field 
+  findProductsChoreo.setAppID("sitidin-sitimma3-SBX-114016a09-ec149631");
+  findProductsChoreo.setSandboxMode("1");//turn on this simulation environment
+
+  // Run the Choreo and store the results
+  FindProductsResultSet findProductsResults = findProductsChoreo.run();
+  
+  // Print results
+  println(findProductsResults.getResponse());
+
+}
